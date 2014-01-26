@@ -3,12 +3,9 @@ import time
 from random import random
 rankDic={0:'[A]', 10:'[J]', 11:'[Q]',12:'[K]'}
 rankRevDic={'A':0,'J':10,'Q':11,'K':12}
-printd=False
-person=True
+printd=True #Option to print out all statements
+person=True #Option to have the end game announced w/ replay option
 
-
-#Link to skype?
-#Graphics plz (pyqt?)
 #What is the object oriented way of doing this?
 
 def isInt(x):
@@ -21,7 +18,8 @@ def isInt(x):
 def printi(s):
     if printd==True:
         print(s)
-        
+
+#Generate a Deck of 52 cards
 def genDeck():
     deck=[]
     for i in range(52):
@@ -45,12 +43,13 @@ def drawCard(pHand,deck,nCards=1):
         return drawCard(pHand,deck,nCards-1)
     else:
         raise ValueError('Cards drawn less than 1')
-        
+
+#Format cards in a [A] format to be readable as a card        
 def dispCard(rank):
         if rank in [0,10,11,12]:
             return rankDic[rank]
         else:
-            return'['+str(rank+1)+']'
+            return'['+str(rank+1)+']' #Offset 1 b/c [8] is actually index 7 
         
 def dispHand(pHand,p1score,p2score,pName='Player 1'):
     printi("Score: (Player 1 has %s stacks) vs. (Player 2 has %s stacks)" % (p1score, p2score))
@@ -67,7 +66,7 @@ def p1Move(p1,p1score,p2score):
     dispHand(p1,p1score,p2score)
     
     while True:
-        #Convert to Numbers
+        #Retrieve choice and convert to Numbers
         choice=raw_input("What card do you want to ask for?  >> ")
         if choice in ['A','a','J','j','Q','q','K','k']:
             choice=rankRevDic[choice.capitalize()]
@@ -92,6 +91,7 @@ def p1Move(p1,p1score,p2score):
     
     
 def p2Move(p2,p1score,p2score):
+    #Random choice within hand
     while True:
         choice=int(random()*13)
         if p2[choice]>0 and p2[choice]<4:
@@ -162,6 +162,8 @@ def main():
             if p2[i] == 4:
                 p2[i] -= 4
                 p2score+=1
+
+    #End Game
     if person:
         print("\nThe final score is %d to %d" % (p1score,p2score))
         if p1score>p2score:
@@ -175,6 +177,7 @@ def main():
         if replay in ['y','Y','Yes','yes']:
             main()    
     else:
+        #For reporting continuous game score. Useful for comparing play algorithms.
         if p1score>p2score:
             return 1
         elif p1score<p2score:
